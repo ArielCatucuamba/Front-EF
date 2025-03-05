@@ -7,7 +7,7 @@ import ClientList from '../components/TablaClients'
 const Clients = () => {
     return (
         <div>
-            <h1 className='font-black text-4xl text-gray-500'>Lista de Clientes</h1>
+            <h1 className='font-black text-4xl text-gray-500'>Lista de Reservas</h1>
 
             <hr className='my-4' />
             

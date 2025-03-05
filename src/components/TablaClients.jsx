@@ -17,7 +17,7 @@ const ClientList = () => {
         try {
             const backendUrl = import.meta.env.VITE_URL_BACKEND_API;
             const token = localStorage.getItem("token");
-            const url = `${backendUrl}/sellers`;
+            const url = `${backendUrl}/reservas`;
             const options = {
                 headers: {
                     "Content-Type": "application/json",
@@ -26,6 +26,7 @@ const ClientList = () => {
             };
             const respuesta = await axios.get(url, options);
             setSellers(respuesta.data);
+            
         } catch (error) {
             console.log(error);
         } finally {
@@ -36,14 +37,14 @@ const ClientList = () => {
     // Función para buscar un vendedor por cédula
     const buscarSeller = async () => {
         if (!searchId) {
-            toast.warn("Ingrese una cédula válida");
+            toast.warn("Ingrese un código válido");
             return;
         }
 
         try {
             const backendUrl = import.meta.env.VITE_URL_BACKEND_API;
             const token = localStorage.getItem("token");
-            const url = `${backendUrl}/sellers-numberid/${searchId}`;
+            const url = `${backendUrl}/reservas/${searchId}`;
             const options = {
                 headers: {
                     "Content-Type": "application/json",
@@ -52,7 +53,7 @@ const ClientList = () => {
             };
             const respuesta = await axios.get(url, options);
             setSellers([respuesta.data.msg]);
-            toast.success("Vendedor encontrado");
+            toast.success("reserva encontrado");
         } catch (error) {
             toast.error(error.response?.data?.msg || "Error al buscar");
         }
@@ -71,7 +72,7 @@ const ClientList = () => {
             <div className="p-4 flex flex-col sm:flex-row justify-center items-center gap-4 rounded-lg mb-4 w-full">
                 <input
                     type="text"
-                    placeholder="Cédula vendedor"
+                    placeholder="Código reserva"
                     value={searchId}
                     onChange={(e) => setSearchId(e.target.value)}
                     className="border p-2 rounded w-full sm:w-64 max-w-xs"
@@ -88,7 +89,7 @@ const ClientList = () => {
             <div className="flex justify-end mb-4 px-4">
                 <button onClick={() => navigate("register")} className="bg-[#e28a8a] text-white px-4 py-2 rounded-lg hover:bg-[#ff5858] transition flex items-center">
                     <i className="fas fa-user-plus mr-2"></i>
-                    Registrar Vendedor
+                    Registrar reserva
                 </button>
             </div>
 
@@ -99,14 +100,10 @@ const ClientList = () => {
                 <div className="px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pb-10">
                     {sellers.map((seller) => (
                         <div key={seller._id} className="w-full max-w-sm p-4 shadow-lg bg-white rounded-lg hover:bg-gray-100 cursor-pointer" onClick={() => navigate(`/dashboard/clients/${seller._id}`)}>
-                            <div className="flex justify-center mb-3">
-                                <img src="/images/seller.png" alt={`Imagen de ${seller.names}`} className="w-20 h-20 object-cover rounded-full" />
-                            </div>
                             <div className="text-left px-2">
-                                <p className="text-lg font-semibold"><strong>CI:</strong> {seller.numberID}</p>
-                                <p className="text-lg"><strong>Nombre:</strong> {seller.names}</p>
-                                <p className="text-lg"><strong>Apellidos:</strong> {seller.lastNames}</p>
-                                <p className="text-lg"><strong>Ciudad:</strong> {seller.SalesCity}</p>
+                                <p className="text-lg"><strong>Código:</strong> {seller.codigo}</p>
+                                <p className="text-lg"><strong>Descripción:</strong> {seller.descripcion}</p>
+                                <p className="text-lg"><strong>Fecha de registro:</strong> {seller.createdAt}</p>
                             </div>
                         </div>
                     ))}
