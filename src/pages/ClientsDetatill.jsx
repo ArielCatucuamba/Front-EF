@@ -11,7 +11,7 @@ const ClientDetaill = () => {
     const navigate = useNavigate()
 
     const [seller, setSeller] = useState({
-        names: "",
+        codigo: "",
         lastNames: "",
         numberID: "",
         username: "",
@@ -30,7 +30,7 @@ const ClientDetaill = () => {
         try {
             const token = localStorage.getItem('token')
             const backUrl = import.meta.env.VITE_URL_BACKEND_API
-            const url = `${backUrl}/sellers/${id}`;
+            const url = `${backUrl}/reservas/${id}`;
             const options = {
                 headers: {
                     'Content-type': 'application/json',
@@ -40,18 +40,25 @@ const ClientDetaill = () => {
 
             const response = await axios.get(url, options);
 
-            const Seller = response.data.msg
+            const Seller = response.data.data
+
+            console.log( Seller);
+
+            console.log(seller)
+            
 
             setSeller({
-                names: Seller.names,
-                lastNames: Seller.lastNames,
-                numberID: Seller.numberID,
-                username: Seller.username,
-                email: Seller.email,
-                SalesCity: Seller.SalesCity,
-                PhoneNumber: Seller.PhoneNumber,
-                status: Seller.status
-
+                fecha: Seller.updatedAt,
+                codigo: Seller.codigo,
+                descripcion: Seller.descripcion,
+                auditorioC: Seller.auditorio.codigo,
+                auditorioCap: Seller.auditorio.capacidad,
+                auditorioUb: Seller.auditorio.ubicacion,
+                auditorioN: Seller.auditorio.nombre + seller, 
+                conf: Seller.conferencista.nombre,
+                conA: Seller.conferencista.apellido,
+                confG: Seller.conferencista.genero,
+                confT: Seller.conferencista.telefono,
             })
 
         } catch (error) {
@@ -145,22 +152,37 @@ const ClientDetaill = () => {
 
                         <div>
                             <label className="block font-bold text-gray-700">Codigo:</label>
-                            <p className="text-gray-800 p-2 rounded">{seller?.numberID || "N/A"}</p>
+                            <p className="text-gray-800 p-2 rounded">{seller?.codigo || "N/A"}</p>
                         </div>
 
                         <div>
                             <label className="block font-bold text-gray-700">Descripcion:</label>
-                            <p className="text-gray-800 p-2 rounded">{seller?.username || "N/A"}</p>
+                            <p className="text-gray-800 p-2 rounded">{seller?.descripcion || "N/A"}</p>
                         </div>
 
                         <div>
                             <label className="block font-bold text-gray-700">Auditorio:</label>
-                            <p className="text-gray-800 p-2 rounded">{seller?.email || "N/A"}</p>
+                            <p className="text-gray-800 p-2 rounded">{seller?.auditorioC || "N/A"}</p>
                         </div>
 
                         <div>
                             <label className="block font-bold text-gray-700">Conferencista:</label>
-                            <p className="text-gray-800 p-2 rounded">{seller?.SalesCity || "N/A"}</p>
+                            <p className="text-gray-800 p-2 rounded">{seller?.conf + "" + seller.conA || "N/A"}</p>
+                        </div>
+
+                        <div>
+                            <label className="block font-bold text-gray-700">Capacidad:</label>
+                            <p className="text-gray-800 p-2 rounded">{seller?.auditorioCap || "N/A"}</p>
+                        </div>
+
+                        <div>
+                            <label className="block font-bold text-gray-700">Ubicación:</label>
+                            <p className="text-gray-800 p-2 rounded">{seller?.auditorioUb || "N/A"}</p>
+                        </div>
+
+                        <div>
+                            <label className="block font-bold text-gray-700">Fecha:</label>
+                            <p className="text-gray-800 p-2 rounded">{seller?.fecha || "N/A"}</p>
                         </div>
 
                         
