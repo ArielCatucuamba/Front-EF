@@ -10,6 +10,11 @@ const RegisterClients = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [estudiante, setEstudiante] = useState(null);
     const [materia, setMateria] = useState(null);
+    const completeconf = false;
+    const completeaudi = false;
+    const idcon = "";
+    const idaudi = "";
+    
 
     const validationSchema = Yup.object({
         cedula: Yup.string()
@@ -25,47 +30,60 @@ const RegisterClients = () => {
     });
 
     const fetchEstudiante = async () => {
+        
         setIsLoading(true);
-        try {
-            const backendUrl = import.meta.env.VITE_URL_BACKEND_API;
-            const token = localStorage.getItem("token");
-            const url = `${backendUrl}/estudiantes/${formik.values.cedula}`;
-            const options = {
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-            };
-            const response = await axios.get(url, options);
-            setEstudiante(response.data.data);
-            toast.success("Estudiante encontrado");
-        } catch (error) {
-            toast.error("No se encontró el estudiante");
-        } finally {
-            setIsLoading(false);
+        if (formik.values.cedula == ""){
+            toast.error("Ingrese cédula del Conferencista");
+        }else{
+            try {
+                const backendUrl = import.meta.env.VITE_URL_BACKEND_API;
+                const token = localStorage.getItem("token");
+                const url = `${backendUrl}/conferencistas/${formik.values.cedula}`;
+                const options = {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                };
+                const response = await axios.get(url, options);
+                setEstudiante(response.data.data);
+                toast.success("Conferencista encontrado");
+            } catch (error) {
+                toast.error("No se encontró el Conferencista");
+            } finally {
+                setIsLoading(false);
+            }
         }
+        
     };
 
     const fetchMateria = async () => {
         setIsLoading(true);
-        try {
-            const backendUrl = import.meta.env.VITE_URL_BACKEND_API;
-            const token = localStorage.getItem("token");
-            const url = `${backendUrl}/materias/${formik.values.codigoMateria}`;
-            const options = {
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-            };
-            const response = await axios.get(url, options);
-            setMateria(response.data.data);
-            toast.success("Materia encontrada");
-        } catch (error) {
-            toast.error("No se encontró la materia");
-        } finally {
-            setIsLoading(false);
+        
+        if (formik.values.codigoMateria == ""){
+            toast.error("Ingrese código del Auditorio");
+        }else{
+            try {
+                const backendUrl = import.meta.env.VITE_URL_BACKEND_API;
+                const token = localStorage.getItem("token");
+                const url = `${backendUrl}/auditorios/${formik.values.codigoMateria}`;
+                const options = {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                };
+                const response = await axios.get(url, options);
+                setMateria(response.data.data);
+                toast.success("Auditorio encontrada");
+                completeaudi = true;
+            } catch (error) {
+                toast.error("No se encontró el Auditorio");
+            } finally {
+                setIsLoading(false);
+            }
         }
+        
     };
 
     const formik = useFormik({
@@ -76,26 +94,44 @@ const RegisterClients = () => {
             descripcion: "",
             creditos: "",
         },
-        validationSchema,
         onSubmit: async (values) => {
+            
             setIsLoading(true);
-            try {
-                const backendUrl = import.meta.env.VITE_URL_BACKEND_API;
-                const token = localStorage.getItem("token");
-                const url = `${backendUrl}/matriculas/registrar`;
-                const options = {
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`,
-                    },
-                };
-                const response = await axios.post(url, values, options);
-                toast.success(response.data.msg);
-            } catch (error) {
-                toast.error(error.response?.data?.msg || "Error al registrar la matrícula");
-            } finally {
-                setIsLoading(false);
+            if (formik.values.codigoMateria == "" || formik.values.cedula == "" || formik.values.descripcion == "" || formik.values.codigoMatricula == "" ){
+                toast.error("Existen campos vacíos");
+            }else{
+                try {
+                    const backendUrl = import.meta.env.VITE_URL_BACKEND_API;
+                    const token = localStorage.getItem("token");
+                    const url = `${backendUrl}/reservas/registrar`;
+                    const options = {
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${token}`,
+                        },
+                    };
+                    const rename = {
+                        codigo: values.codigoMatricula,
+                        descripcion: values.descripcion,
+                        auditorio: materia._id,
+                        conferencista: estudiante._id
+                    }
+                    
+                    console.log(rename);
+                    
+                    const response = await axios.post(url, rename, options);
+                    toast.success(response.data.msg);
+                    console.log(response);
+                    
+                } catch (error) {
+                    console.log(error);
+                    
+                    toast.error(error.response?.data?.msg || "Error al registrar la reserva");
+                } finally {
+                    setIsLoading(false);
+                }
             }
+            
         },
     });
 
@@ -114,11 +150,12 @@ const RegisterClients = () => {
 
             <ToastContainer />
             <form onSubmit={formik.handleSubmit}>
-                <h2 className="text-lg font-bold">1. Ingresa un estudiante</h2>
+                <h2 className="text-lg font-bold">1. Ingresa un conferencista</h2>
+
                 <div className="mb-4">
-                    <label>Cédula del estudiante</label>
                     <div className="flex">
                         <input
+                            placeholder="Cédula del conferencista"
                             type="text"
                             name="cedula"
                             value={formik.values.cedula}
@@ -128,14 +165,15 @@ const RegisterClients = () => {
                         <button type="button" onClick={fetchEstudiante} className="ml-2 bg-red-500 text-white p-2 rounded">Validar</button>
                     </div>
                     {estudiante && (
-                        <div className="p-2 mt-2 bg-gray-200 rounded">Estudiante registrado: {estudiante.nombre} {estudiante.apellido}</div>
+                        <div className="p-2 mt-2 bg-gray-200 rounded">Conferencista registrado: {estudiante.nombre} {estudiante.apellido}</div>
                     )}
                 </div>
-                <h2 className="text-lg font-bold">2. Ingresa una materia</h2>
+                <br />
+                <h2 className="text-lg font-bold">2. Ingresa un Aduitorio</h2>
                 <div className="mb-4">
-                    <label>Código de materia</label>
                     <div className="flex">
                         <input
+                            placeholder="Código de Auditroio"
                             type="text"
                             name="codigoMateria"
                             value={formik.values.codigoMateria}
@@ -156,10 +194,6 @@ const RegisterClients = () => {
                 <div className="mb-4">
                     <label>Descripción</label>
                     <input type="text" name="descripcion" className="border p-2 w-full" onChange={formik.handleChange} />
-                </div>
-                <div className="mb-4">
-                    <label>Créditos</label>
-                    <input type="number" name="creditos" className="border p-2 w-full" onChange={formik.handleChange} />
                 </div>
                 <button type="submit" className="bg-red-500 text-white p-2 rounded w-full">Registrar</button>
             </form>
