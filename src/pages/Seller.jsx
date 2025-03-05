@@ -8,7 +8,7 @@ const Sellers = () => {
     const navigate = useNavigate()
     return (
         <div>
-            <h1 className='font-black text-4xl text-gray-500'>Lista de Vendedores</h1>
+            <h1 className='font-black text-4xl text-gray-500'>Auditorios</h1>
 
             <hr className='my-4' />
             

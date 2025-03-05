@@ -37,7 +37,7 @@ const Login = () => {
 
             try {
                 // Usar la ruta '/login' para la autenticación
-                const { data } = await api.post('/login', normalizedForm); // Cambio a la ruta correcta
+                const { data } = await api.post('login', normalizedForm); // Cambio a la ruta correcta
 
                 // Establecer el token en localStorage
                 localStorage.setItem('token', data.token);

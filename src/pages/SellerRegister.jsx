@@ -7,84 +7,56 @@ import axios from "axios";
 const Register = () => {
     const navigate = useNavigate();
 
+    // Validación de formulario
     const validationSchema = Yup.object({
-        names: Yup.string()
-            .required("Los nombre es obligatorio")
-            .test("two-words", "El nombre debe contener al menos dos nombres", value => 
-                value && value.trim().split(/\s+/).length >= 2
-            ),
-        lastNames: Yup.string()
-            .required("Los apellidos son obligatorios")
-            .test("two-words", "Los apellidos deben contener al menos dos apellidos", value => 
-                value && value.trim().split(/\s+/).length >= 2
-            ),
-        numberID: Yup.string()
-            .required("El número de identificación es obligatorio")
-            .length(10, "El número de identificación debe tener exactamente 10 dígitos")
-            .matches(/^\d{10}$/, "El número de identificación debe ser un número de 10 dígitos"),
-        email: Yup.string()
-            .email("El correo debe ser válido")
-            .required("El correo es obligatorio"),
-        SalesCity: Yup.string()
-            .required("La ciudad de venta es obligatoria"),
-        PhoneNumber: Yup.string()
-            .required("El número de teléfono es obligatorio")
-            .length(10, "El número de teléfono debe tener exactamente 10 dígitos")
-            .matches(/^\d{10}$/, "El número de teléfono debe ser un número de 10 dígitos"),
+        nombre: Yup.string()
+            .required("El nombre del auditorio es obligatorio")
+            .min(2, "El nombre debe tener al menos 2 caracteres")
+            .max(50, "El nombre no puede exceder los 50 caracteres"),
+        codigo: Yup.string()
+            .required("El código del auditorio es obligatorio")
+            .max(10, "El código no puede exceder los 10 caracteres"),
+        ubicacion: Yup.string()
+            .required("La ubicación es obligatoria")
+            .min(5, "La ubicación debe tener al menos 5 caracteres"),
+        capacidad: Yup.number()
+            .required("La capacidad es obligatoria")
+            .min(1, "La capacidad debe ser al menos 1")
+            .max(500, "La capacidad no puede exceder los 500"),
+        descripcion: Yup.string()
+            .required("La descripción es obligatoria")
+            .min(5, "La descripción debe tener al menos 5 caracteres"),
     });
-    
-
-    // Lista de las principales ciudades de Ecuador
-    const cities = [
-        "Quito",
-        "Guayaquil",
-        "Cuenca",
-        "Ambato",
-        "Manta",
-        "Loja",
-        "Machala",
-        "Riobamba",
-        "Ibarra",
-        "Durán",
-        "Esmeraldas",
-        "Portoviejo",
-        "Babahoyo",
-        "Tena",
-        "Santo Domingo"
-    ];
 
     // Usar Formik para gestionar el formulario
     const formik = useFormik({
         initialValues: {
-            names: "",
-            lastNames: "",
-            numberID: "",
-            email: "",
-            SalesCity: "", // Cambiado a string
-            PhoneNumber: "",
-            role: "Seller",
-            status: false,
+            nombre: "",
+            codigo: "",
+            ubicacion: "",
+            capacidad: "",
+            descripcion: "",
         },
         validationSchema,
         onSubmit: async (values) => {
             try {
                 const token = localStorage.getItem("token");
                 const backUrl = import.meta.env.VITE_URL_BACKEND_API;
-                const url = `${backUrl}/register`;
+                const url = `${backUrl}/auditorios/registrar`;  // URL de la ruta que me diste
                 const options = {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${token}`,
                     },
                 };
-                const formData = { role: "Seller", status: false, ...values };
+                const formData = { ...values };
                 const response = await axios.post(url, formData, options);
                 toast.success(response.data.msg);
                 setTimeout(() => {
-                    navigate("/dashboard/sellers");
+                    navigate("/dashboard/sellers"); // Redirigir a la lista de auditorios
                 }, 2000);
             } catch (error) {
-                toast.error(error.response?.data?.msg);
+                toast.error(error.response?.data?.msg || "Error al registrar el auditorio");
             }
         },
     });
@@ -105,128 +77,102 @@ const Register = () => {
                     <ToastContainer />
                     <form onSubmit={formik.handleSubmit}>
                         <div className="mb-3">
-                            <label htmlFor="names" className="mb-2 block text-sm font-semibold">
-                                Nombres:
+                            <label htmlFor="nombre" className="mb-2 block text-sm font-semibold">
+                                Nombre del Auditorio:
                             </label>
                             <input
                                 type="text"
-                                id="names"
-                                name="names"
-                                placeholder="Ana Maria"
-                                value={formik.values.names}
+                                id="nombre"
+                                name="nombre"
+                                placeholder="Auditorio Principal"
+                                value={formik.values.nombre}
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
                                 className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500"
                             />
-                            {formik.touched.names && formik.errors.names ? (
-                                <div className="text-red-500 text-sm">{formik.errors.names}</div>
+                            {formik.touched.nombre && formik.errors.nombre ? (
+                                <div className="text-red-500 text-sm">{formik.errors.nombre}</div>
                             ) : null}
                         </div>
 
                         <div className="mb-3">
-                            <label htmlFor="lastNames" className="mb-2 block text-sm font-semibold">
-                                Apellidos:
+                            <label htmlFor="codigo" className="mb-2 block text-sm font-semibold">
+                                Código del Auditorio:
                             </label>
                             <input
                                 type="text"
-                                id="lastNames"
-                                name="lastNames"
-                                placeholder="Perez Rodriguez"
-                                value={formik.values.lastNames}
+                                id="codigo"
+                                name="codigo"
+                                placeholder="AUD001"
+                                value={formik.values.codigo}
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
                                 className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500"
                             />
-                            {formik.touched.lastNames && formik.errors.lastNames ? (
-                                <div className="text-red-500 text-sm">{formik.errors.lastNames}</div>
+                            {formik.touched.codigo && formik.errors.codigo ? (
+                                <div className="text-red-500 text-sm">{formik.errors.codigo}</div>
                             ) : null}
                         </div>
 
                         <div className="mb-3">
-                            <label htmlFor="numberID" className="mb-2 block text-sm font-semibold">
-                                N. Identificacion:
+                            <label htmlFor="ubicacion" className="mb-2 block text-sm font-semibold">
+                                Ubicación del Auditorio:
+                            </label>
+                            <input
+                                type="text"
+                                id="ubicacion"
+                                name="ubicacion"
+                                placeholder="Piso 2, Edificio Central"
+                                value={formik.values.ubicacion}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500"
+                            />
+                            {formik.touched.ubicacion && formik.errors.ubicacion ? (
+                                <div className="text-red-500 text-sm">{formik.errors.ubicacion}</div>
+                            ) : null}
+                        </div>
+
+                        <div className="mb-3">
+                            <label htmlFor="capacidad" className="mb-2 block text-sm font-semibold">
+                                Capacidad:
                             </label>
                             <input
                                 type="number"
-                                id="numberID"
-                                name="numberID"
-                                placeholder="1734567897"
-                                value={formik.values.numberID}
+                                id="capacidad"
+                                name="capacidad"
+                                placeholder="100"
+                                value={formik.values.capacidad}
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
                                 className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500"
                             />
-                            {formik.touched.numberID && formik.errors.numberID ? (
-                                <div className="text-red-500 text-sm">{formik.errors.numberID}</div>
+                            {formik.touched.capacidad && formik.errors.capacidad ? (
+                                <div className="text-red-500 text-sm">{formik.errors.capacidad}</div>
                             ) : null}
                         </div>
 
                         <div className="mb-3">
-                            <label htmlFor="email" className="mb-2 block text-sm font-semibold">
-                                Correo Electronico:
+                            <label htmlFor="descripcion" className="mb-2 block text-sm font-semibold">
+                                Descripción:
                             </label>
-                            <input
-                                type="email"
-                                id="email"
-                                name="email"
-                                placeholder="Prima@example.com"
-                                value={formik.values.email}
+                            <textarea
+                                id="descripcion"
+                                name="descripcion"
+                                placeholder="Auditorio con capacidad para 100 personas"
+                                value={formik.values.descripcion}
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
                                 className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500"
                             />
-                            {formik.touched.email && formik.errors.email ? (
-                                <div className="text-red-500 text-sm">{formik.errors.email}</div>
+                            {formik.touched.descripcion && formik.errors.descripcion ? (
+                                <div className="text-red-500 text-sm">{formik.errors.descripcion}</div>
                             ) : null}
                         </div>
 
                         <div className="mb-3">
-                            <label htmlFor="SalesCity" className="mb-2 block text-sm font-semibold">
-                                Ciudad de Venta:
-                            </label>
-                            <select
-                                id="SalesCity"
-                                name="SalesCity"
-                                value={formik.values.SalesCity}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                                className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500"
-                            >
-                                <option value="">Selecciona una ciudad</option>
-                                {cities.map((city, index) => (
-                                    <option key={index} value={city}>
-                                        {city}
-                                    </option>
-                                ))}
-                            </select>
-                            {formik.touched.SalesCity && formik.errors.SalesCity ? (
-                                <div className="text-red-500 text-sm">{formik.errors.SalesCity}</div>
-                            ) : null}
-                        </div>
-
-                        <div className="mb-3">
-                            <label htmlFor="PhoneNumber" className="mb-2 block text-sm font-semibold">
-                                Telefono:
-                            </label>
-                            <input
-                                type="text"
-                                id="PhoneNumber"
-                                name="PhoneNumber"
-                                placeholder="0987654324"
-                                value={formik.values.PhoneNumber}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                                className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500"
-                            />
-                            {formik.touched.PhoneNumber && formik.errors.PhoneNumber ? (
-                                <div className="text-red-500 text-sm">{formik.errors.PhoneNumber}</div>
-                            ) : null}
-                        </div>
-
-                        <div className="mb-3">
-                        
                             <button className="py-2 w-full block text-center bg-[#bb4d4d] text-slate-100 border rounded-xl hover:scale-100 duration-300 hover:bg-[#ff5858] hover:text-white">
-                                Registrar
+                                Registrar Auditorio
                             </button>
                         </div>
                     </form>
@@ -237,5 +183,3 @@ const Register = () => {
 };
 
 export default Register;
-
-

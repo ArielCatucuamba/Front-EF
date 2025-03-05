@@ -4,136 +4,79 @@ import { useParams, useNavigate } from "react-router-dom";
 import Loader from "../components/Carga";
 import { ToastContainer, toast } from "react-toastify";
 
-const SellerDetaill = () => {
-
+const SellerDetaill  = () => {
     const [isLoading, setIsLoading] = useState(false);
-    const { id } = useParams()
-    const navigate = useNavigate()
+    const { codigo } = useParams();  // Cambié 'id' por 'codigo' para que coincida con la ruta
+    const navigate = useNavigate();
 
-    const [seller, setSeller] = useState({
-        names: "",
-        lastNames: "",
-        numberID: "",
-        username: "",
-        email: "",
-        SalesCity: "",
-        PhoneNumber: "",
-        role: "Seller",
-        status: true,
-        token: null,
-        confirmEmail: false
+    const [auditorio, setAuditorio] = useState({
+        nombre: "",
+        codigo: "",
+        ubicacion: "",
+        capacidad: "",
+        descripcion: ""
     });
 
-
-    const getSeller = async () => {
+    // Función para obtener los detalles del auditorio
+    const getAuditorio = async () => {
         setIsLoading(true);
         try {
-            const token = localStorage.getItem('token')
-            const backUrl = import.meta.env.VITE_URL_BACKEND_API
-            const url = `${backUrl}/sellers/${id}`;
+            const token = localStorage.getItem('token');
+            const backUrl = import.meta.env.VITE_URL_BACKEND_API;
+            const url = `${backUrl}/auditorios/${codigo}`;  // Usamos la ruta con 'codigo'
             const options = {
                 headers: {
                     'Content-type': 'application/json',
                     Authorization: `Bearer ${token}`
                 }
-            }
+            };
 
             const response = await axios.get(url, options);
 
-            const Seller = response.data.msg
+            const auditorioData = response.data.data;  // Cambié 'msg' por 'data' según la respuesta del backend
 
-            setSeller({
-                names: Seller.names,
-                lastNames: Seller.lastNames,
-                numberID: Seller.numberID,
-                username: Seller.username,
-                email: Seller.email,
-                SalesCity: Seller.SalesCity,
-                PhoneNumber: Seller.PhoneNumber,
-                status: Seller.status
-
-            })
+            setAuditorio({
+                nombre: auditorioData.nombre,
+                codigo: auditorioData.codigo,
+                ubicacion: auditorioData.ubicacion,
+                capacidad: auditorioData.capacidad,
+                descripcion: auditorioData.descripcion
+            });
 
         } catch (error) {
             console.log(error);
-
-
+            toast.error("Error al obtener el auditorio");
         } finally {
             setIsLoading(false);
         }
-    }
-
-    const eliminarSeller = async (id) => {
-        const confirmacion = window.confirm("¿Estás seguro de que deseas eliminar este vendedor?");
-        if (!confirmacion) return;
-
-        try {
-            const backendUrl = import.meta.env.VITE_URL_BACKEND_API;
-            const token = localStorage.getItem("token");
-            const url = `${backendUrl}/deleteSellerinfo/${id}`;
-            const options = {
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-            };
-            const respuesta = await axios.delete(url, options);
-            toast.success(respuesta.data.msg);
-            setTimeout(() => {
-                navigate("/dashboard/sellers");
-            }, 2000); // Actualizar la lista de vendedores
-        } catch (error) {
-            console.error(error);
-            alert("Error al eliminar el vendedor");
-        }
     };
 
-
     useEffect(() => {
-        getSeller()
-    }, [])
+        getAuditorio();
+    }, [codigo]);
 
     if (isLoading) {
-        return (
-            <Loader />
-        );
+        return <Loader />;
     }
 
     return (
         <>
             <ToastContainer />
             <button
-                onClick={() => navigate('/dashboard/sellers')}
+                onClick={() => navigate('/dashboard/sellers')} // Ruta a la lista de auditorios
                 className="mb-4 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 w-full sm:w-auto"
             >
                 ← Atrás
             </button>
 
-            <div className="flex justify-end gap-4 mt-6">
-                <button
-                    onClick={() => navigate(`/dashboard/sellers/update/${id}`)}
-                    className="px-4 py-2 bg-[#e28a8a] text-white rounded hover:bg-[#ff5858]"
-                >
-                    Actualizar
-                </button>
-
-                <button
-                    onClick={() => eliminarSeller(id)}
-                    className="px-4 py-2 bg-[#bb4d4d] text-white rounded hover:bg-[#870000]"
-                >
-                    Eliminar
-                </button>
-            </div>
-
-
-            <h2 className="text-2xl font-bold text-center mb-6">Perfil del Vendedor</h2>
+            <h2 className="text-2xl font-bold text-center mb-6">Detalles del Auditorio</h2>
 
             <div className="w-full max-w-screen-lg mx-auto px-4">
                 <div className="flex justify-center mb-6">
                     <div className="relative">
                         <img
-                            src="https://framerusercontent.com/images/c4RekPnAcDHaTgIsPtCLCGImfE.jpeg"
-                            alt="Seller"
+                            src="https://framerusercontent.com/images/c4RekPnAcDHaTgIsPtCLCGImfE.jpeg" // Imagen de ejemplo
+                            alt="Auditorio"
                             className="w-32 h-32 object-cover rounded-full border-4 border-blue-600"
                         />
                     </div>
@@ -141,46 +84,35 @@ const SellerDetaill = () => {
 
                 <div className="space-y-4 mt-8">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        
-
                         <div>
-                            <label className="block font-bold text-gray-700">Número de Identificación:</label>
-                            <p className="text-gray-800 p-2 rounded">{seller?.numberID || "N/A"}</p>
+                            <label className="block font-bold text-gray-700">Código del Auditorio:</label>
+                            <p className="text-gray-800 p-2 rounded">{auditorio?.codigo || "N/A"}</p>
                         </div>
 
                         <div>
-                            <label className="block font-bold text-gray-700">Nombres:</label>
-                            <p className="text-gray-800 p-2 rounded">{seller?.names || "N/A"}</p>
+                            <label className="block font-bold text-gray-700">Nombre:</label>
+                            <p className="text-gray-800 p-2 rounded">{auditorio?.nombre || "N/A"}</p>
                         </div>
 
                         <div>
-                            <label className="block font-bold text-gray-700">Ubicacion:</label>
-                            <p className="text-gray-800 p-2 rounded">{seller?.username || "N/A"}</p>
+                            <label className="block font-bold text-gray-700">Ubicación:</label>
+                            <p className="text-gray-800 p-2 rounded">{auditorio?.ubicacion || "N/A"}</p>
                         </div>
 
                         <div>
                             <label className="block font-bold text-gray-700">Capacidad:</label>
-                            <p className="text-gray-800 p-2 rounded">{seller?.lastNames || "N/A"}</p>
+                            <p className="text-gray-800 p-2 rounded">{auditorio?.capacidad || "N/A"}</p>
                         </div>
 
                         <div>
-                            <label className="block font-bold text-gray-700">Descripcion:</label>
-                            <p className="text-gray-800 p-2 rounded">{seller?.SalesCity || "N/A"}</p>
+                            <label className="block font-bold text-gray-700">Descripción:</label>
+                            <p className="text-gray-800 p-2 rounded">{auditorio?.descripcion || "N/A"}</p>
                         </div>
-
-                        
-
-                        
                     </div>
                 </div>
-
-
             </div>
         </>
     );
+};
 
-}
-
-
-
-export default SellerDetaill
+export default SellerDetaill ;

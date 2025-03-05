@@ -41,6 +41,7 @@ const OrderDetaill = () => {
 
             const conferencistaData = response.data.data;
 
+            
             setConferencista({
                 nombre: conferencistaData.nombre,
                 apellido: conferencistaData.apellido,

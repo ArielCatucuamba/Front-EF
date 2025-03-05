@@ -47,16 +47,17 @@ const TablaRecepcionistas = () => {
                     Authorization: `Bearer ${token}`,
                 },
             });
-
+                
+                
             if (respuesta.data.data) {
                 setRecepcionistas([respuesta.data.data]); // Almacena el recepcionista encontrado
-                toast.success("Recepcionista encontrado");
+                toast.success("Conferencista encontrado");
             } else {
-                toast.error("Recepcionista no encontrado");
+                toast.error("Conferencista no encontrado");
                 setRecepcionistas([]);  // Si no lo encuentra, limpiamos la lista
             }
         } catch (error) {
-            toast.error(error.response?.data?.msg || "Error al buscar recepcionista");
+            toast.error(error.response?.data?.msg || "Error al buscar Conferencista");
         }
     };
 
@@ -100,10 +101,10 @@ const TablaRecepcionistas = () => {
             ) : (
                 <div className="px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pb-10">
                     {recepcionistas.map((recepcionista) => (
-                        <div key={recepcionista._id} className="w-full max-w-sm p-4 shadow-lg bg-white relative cursor-pointer hover:bg-gray-100 transition duration-200 rounded-lg flex flex-col" onClick={() => navigate(`/dashboard/orders/${recepcionista._id}`)}>
+                        <div key={recepcionista.searchId} className="w-full max-w-sm p-4 shadow-lg bg-white relative cursor-pointer hover:bg-gray-100 transition duration-200 rounded-lg flex flex-col" onClick={() => navigate(`/dashboard/orders/${recepcionista.searchId}`)}>
                             {/* Imagen del recepcionista */}
                             <div className="flex justify-center mb-3">
-                                <img src="https://www.shutterstock.com/image-vector/man-giving-speech-event-260nw-2463254767.jpg" alt={`Imagen de ${recepcionista.names}`} className="w-20 h-20 object-cover rounded-full" />
+                                <img src="https://www.shutterstock.com/image-vector/man-giving-speech-event-260nw-2463254767.jpg" alt={`Imagen de ${recepcionista.nombre}`} className="w-20 h-20 object-cover rounded-full" />
                             </div>
                             {/* Detalles del recepcionista */}
                             <div className="text-left px-2">
