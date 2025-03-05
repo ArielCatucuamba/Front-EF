@@ -23,7 +23,10 @@ const SellerDetaill  = () => {
         try {
             const token = localStorage.getItem('token');
             const backUrl = import.meta.env.VITE_URL_BACKEND_API;
-            const url = `${backUrl}/auditorios/${codigo}`;  // Usamos la ruta con 'codigo'
+            const url = `${backUrl}/auditorios/${codigo}`; 
+            console.log(codigo);
+            
+            // Usamos la ruta con 'codigo'
             const options = {
                 headers: {
                     'Content-type': 'application/json',

@@ -42,7 +42,7 @@ function App() {
                         }
                     >
                         <Route path="sellers/" element={<Sellers />} />
-                        <Route path="sellers/:id" element={<SellerDetaill/>} />
+                        <Route path="sellers/:codigo" element={<SellerDetaill/>} />
                         <Route path="sellers/register" element={<Register />} />
                         <Route path="sellers/update/:id" element={<UpdateSeller />} />
                         
@@ -52,7 +52,7 @@ function App() {
                         <Route path="clients/update/:id" element={<UpdateClient />} />
 
                         <Route path="orders/" element={<Orders/>} />
-                        <Route path="orders/:id" element={<OrderDetaill/>} />
+                        <Route path="orders/:cedula" element={<OrderDetaill/>} />
                         <Route path="orders/register" element={<RegisterOrders/>} />
                         <Route path="orders/update/:id" element={<UpdateOrder />} />
 

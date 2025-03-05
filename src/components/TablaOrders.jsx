@@ -101,7 +101,7 @@ const TablaRecepcionistas = () => {
             ) : (
                 <div className="px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pb-10">
                     {recepcionistas.map((recepcionista) => (
-                        <div key={recepcionista.searchId} className="w-full max-w-sm p-4 shadow-lg bg-white relative cursor-pointer hover:bg-gray-100 transition duration-200 rounded-lg flex flex-col" onClick={() => navigate(`/dashboard/orders/${recepcionista.searchId}`)}>
+                        <div key={recepcionista.searchId} className="w-full max-w-sm p-4 shadow-lg bg-white relative cursor-pointer hover:bg-gray-100 transition duration-200 rounded-lg flex flex-col" onClick={() => navigate(`/dashboard/orders/${recepcionista.cedula}`)}>
                             {/* Imagen del recepcionista */}
                             <div className="flex justify-center mb-3">
                                 <img src="https://www.shutterstock.com/image-vector/man-giving-speech-event-260nw-2463254767.jpg" alt={`Imagen de ${recepcionista.nombre}`} className="w-20 h-20 object-cover rounded-full" />

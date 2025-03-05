@@ -101,7 +101,7 @@ const Tabla = () => {
             ) : (
                 <div className="px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pb-10">
                     {auditorios.map((auditorio) => (
-                        <div key={auditorio.codigo} className="w-full max-w-sm p-4 shadow-lg bg-white relative cursor-pointer hover:bg-gray-100 transition duration-200 rounded-lg flex flex-col" onClick={() => navigate(`/dashboard/sellers/${auditorio.codigo}`)}>
+                        <div key={auditorio.codigo} className="w-full max-w-sm p-4 shadow-lg bg-white relative cursor-pointer hover:bg-gray-100 transition duration-200 rounded-lg flex flex-col" onClick={() => navigate(`/dashboard/sellers/${conferencista.codigo}`)}>
                             {/* Imagen del auditorio */}
                             <div className="flex justify-center mb-3">
                                 <img src="https://framerusercontent.com/images/c4RekPnAcDHaTgIsPtCLCGImfE.jpeg" alt={`Imagen del auditorio ${auditorio.nombre}`} className="w-20 h-20 object-cover rounded-full" />
